@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biotechnology Lab Library</title>
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --panel: #fffdf8;
+    --ink: #33302a;
+    --muted: #7a7468;
+    --line: #e2ddd2;
+    --accent: #4c6b54;
+    --accent-soft: #eef2ec;
+    --amber: #b98a3c;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Georgia, "Times New Roman", serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; }
+  header.lib {
+    display: flex; align-items: baseline; justify-content: space-between;
+    border-bottom: 3px double var(--line); padding-bottom: 16px; margin-bottom: 8px;
+  }
+  header.lib h1 { font-size: 26px; font-weight: normal; letter-spacing: 0.5px; }
+  header.lib h1 span { color: var(--accent); }
+  header.lib p { color: var(--muted); font-size: 14px; font-style: italic; }
+  section { margin-top: 32px; }
+  .sec-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+  .sec-head .num {
+    font-size: 13px; color: var(--accent); border: 1px solid var(--accent);
+    border-radius: 50%; width: 26px; height: 26px; display: inline-flex;
+    align-items: center; justify-content: center; flex: none;
+  }
+  .sec-head h2 { font-size: 19px; font-weight: normal; letter-spacing: 0.5px; }
+  .sec-head .hint { color: var(--muted); font-size: 13px; font-style: italic; margin-left: auto; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+
+  /* Section 1 */
+  .lib-grid { display: grid; grid-template-columns: 240px 1fr; gap: 16px; }
+  @media (max-width: 800px) { .lib-grid { grid-template-columns: 1fr; } }
+  .side { padding: 16px; }
+  .side h3, .card h3 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-family: Georgia, serif; margin-bottom: 10px; }
+  ul.modules { list-style: none; }
+  ul.modules li {
+    padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 14px;
+    display: flex; justify-content: space-between; gap: 8px;
+  }
+  ul.modules li:hover { background: var(--accent-soft); }
+  ul.modules li.active { background: var(--accent); color: #fff; }
+  ul.modules li .count { font-size: 12px; opacity: 0.75; }
+  .practicals { padding: 16px; }
+  .prac-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .prac-item {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .prac-item:hover { background: var(--accent-soft); }
+  .prac-item.active { border-color: var(--accent); background: var(--accent-soft); }
+  .prac-item .code { font-size: 12px; color: var(--amber); letter-spacing: 0.5px; }
+  .prac-item .name { font-size: 15px; }
+  .prac-item .open { font-size: 12px; color: var(--accent); white-space: nowrap; }
+  .prac-item .open-btn {
+    font-family: Georgia, serif; font-size: 13px; padding: 6px 14px; border-radius: 20px;
+    border: 1px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer;
+    white-space: nowrap; transition: background 0.15s, color 0.15s;
+  }
+  .prac-item .open-btn:hover { background: var(--accent); color: #fff; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+  .exp-card { border: 1px solid var(--line); border-radius: 8px; padding: 14px; background: #fbf9f3; }
+  .exp-card .tag { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); }
+  .exp-card h4 { font-size: 15px; margin: 4px 0 6px; font-weight: normal; }
+  .exp-card p { font-size: 13px; color: var(--muted); }
+
+  /* Notes */
+  .notes { padding: 16px; margin-top: 16px; }
+  .notes form { display: flex; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .notes select, .notes input, .notes button {
+    font-family: Georgia, serif; font-size: 14px; padding: 9px 12px;
+    border: 1px solid var(--line); border-radius: 6px; background: #fff;
+  }
+  .notes input { flex: 1; min-width: 220px; }
+  .notes button { background: var(--accent); color: #fff; border-color: var(--accent); cursor: pointer; }
+  .notes button:hover { filter: brightness(1.08); }
+  .note-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .note-list li { background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; padding: 8px 12px; font-size: 14px; }
+  .note-list li .who { color: var(--muted); font-size: 12px; font-style: italic; }
+
+  /* Section 2 */
+  .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .report-part {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px; cursor: pointer; transition: border-color 0.15s, background 0.15s;
+  }
+  .report-part:hover { background: var(--accent-soft); }
+  .report-part.active { border-color: var(--accent); background: var(--accent-soft); }
+  .report-part h4 { font-size: 15px; font-weight: normal; margin-bottom: 4px; }
+  .report-part p { font-size: 13px; color: var(--muted); }
+  .tip-box {
+    margin-top: 14px; padding: 14px 16px; border-left: 3px solid var(--amber);
+    background: #fdf9f0; border-radius: 0 8px 8px 0; font-size: 14px;
+  }
+  .tip-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--amber); display: block; margin-bottom: 4px; }
+
+  /* Section 3 */
+  .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 800px) { .preview-grid { grid-template-columns: 1fr; } }
+  .steps { padding: 16px; }
+  .steps ol { list-style: none; counter-reset: step; }
+  .steps li { counter-increment: step; display: flex; gap: 12px; padding: 8px 0; font-size: 14px; }
+  .steps li::before {
+    content: counter(step); flex: none; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-size: 12px; display: inline-flex;
+    align-items: center; justify-content: center; margin-top: 2px;
+  }
+  /* Visual story strip */
+  .story { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+  .story-card {
+    background: #fbf9f3; border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+  }
+  .story-card svg { display: block; width: 100%; height: auto; }
+  .story-card .cap {
+    display: flex; gap: 6px; align-items: baseline; padding: 6px 8px; font-size: 11px;
+    color: var(--muted); line-height: 1.3; border-top: 1px solid var(--line);
+  }
+  .story-card .cap b { color: var(--accent); font-size: 11px; flex: none; }
+  .result-visual { border: 1px solid var(--line); border-radius: 8px; background: #f7f9f4; overflow: hidden; }
+  .result-visual svg { display: block; width: 100%; height: auto; }
+  .expected { padding: 16px; }
+  .expected p { font-size: 14px; margin-bottom: 10px; }
+  .expected .obs { background: var(--accent-soft); border-radius: 8px; padding: 12px 14px; font-size: 14px; }
+  .expected .obs strong { color: var(--accent); }
+  .preview-title { font-size: 15px; margin-bottom: 10px; }
+  .preview-title em { color: var(--muted); font-size: 13px; }
+  /* Simulation modal */
+  .modal {
+    position: fixed; inset: 0; background: rgba(51, 48, 42, 0.45);
+    display: flex; align-items: center; justify-content: center; z-index: 50; padding: 20px;
+  }
+  .modal-panel {
+    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+    max-width: 640px; width: 100%; padding: 24px; position: relative;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+  }
+  .modal-close {
+    position: absolute; top: 10px; right: 12px; border: none; background: none;
+    font-size: 22px; color: var(--muted); cursor: pointer; line-height: 1;
+  }
+  .modal-close:hover { color: var(--ink); }
+  .modal-tag {
+    font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--amber);
+  }
+  .modal-panel h3 { font-size: 18px; font-weight: normal; margin: 4px 0 12px; }
+  .sim-dots { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+  .sim-dots .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+  .sim-dots .dot.done { background: var(--accent-soft); border: 1px solid var(--accent); }
+  .sim-dots .dot.on { background: var(--accent); }
+  .sim-count { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); display: block; margin-bottom: 4px; }
+  .sim-text { font-size: 15px; margin-bottom: 12px; }
+  .sim-obs {
+    background: var(--accent-soft); border-left: 3px solid var(--accent);
+    border-radius: 0 8px 8px 0; padding: 12px 14px; font-size: 14px; margin-bottom: 12px;
+  }
+  .sim-obs strong { color: var(--accent); }
+  .sim-final {
+    background: #fdf9f0; border-left: 3px solid var(--amber);
+    border-radius: 0 8px 8px 0; padding: 12px 14px; font-size: 14px; margin-bottom: 12px;
+  }
+  .sim-final strong { color: var(--amber); }
+  .sim-controls { display: flex; gap: 10px; justify-content: flex-end; }
+  .sim-controls button {
+    font-family: Georgia, serif; font-size: 14px; padding: 9px 18px; border-radius: 6px;
+    border: 1px solid var(--accent); cursor: pointer;
+  }
+  .sim-controls #simPrev { background: transparent; color: var(--accent); }
+  .sim-controls #simPrev:disabled { opacity: 0.4; cursor: default; }
+  .sim-controls #simNext { background: var(--accent); color: #fff; }
+  .sim-controls #simNext:hover { filter: brightness(1.08); }
+
+  /* Simulation visuals */
+  .sim-viz {
+    background: #fbf9f3; border: 1px solid var(--line); border-radius: 8px;
+    margin-bottom: 14px; padding: 6px 6px 0;
+  }
+  .sim-viz svg { display: block; width: 100%; height: auto; }
+  .viz-note { font-size: 11px; color: var(--muted); font-style: italic; text-align: center; padding-bottom: 6px; display: block; }
+  @keyframes rotorspin { to { transform: rotate(360deg); } }
+  .rotor { transform-box: fill-box; transform-origin: center; animation: rotorspin 0.7s linear 4; }
+  @keyframes bubbleup { 0% { transform: translateY(0); opacity: .8; } 100% { transform: translateY(-30px); opacity: 0; } }
+  .bubble { animation: bubbleup 1.5s ease-in infinite; }
+  @keyframes migrate { from { transform: translateY(0); } to { transform: translateY(var(--ty)); } }
+  .band { animation: migrate 3s cubic-bezier(.25,.6,.35,1) forwards; }
+  @keyframes disperse { to { transform: translate(var(--dx), var(--dy)); opacity: .2; } }
+  .frag { animation: disperse 2.2s ease-out forwards; }
+  @keyframes fall { to { transform: translateY(var(--fy)); } }
+  .drip { animation: fall 1.6s ease-in infinite; }
+
+  footer { margin-top: 40px; text-align: center; color: var(--muted); font-size: 12px; font-style: italic; border-top: 1px solid var(--line); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="lib">
+    <h1>Biotechnology <span>Lab Library</span></h1>
+    <p>A study shelf for practical sessions &mdash;browse, review, write up.</p>
+  </header>
+
+  <!-- SECTION 1: EXPERIMENT LIBRARY -->
+  <section id="library">
+    <div class="sec-head">
+      <span class="num">1</span>
+      <h2>Experiment Library</h2>
+      <span class="hint">Choose a module, then open a practical</span>
+    </div>
+    <div class="lib-grid">
+      <aside class="panel side">
+        <h3>Modules</h3>
+        <ul class="modules" id="moduleList"></ul>
+      </aside>
+      <div class="panel practicals">
+        <h3 id="pracHeading">Practical sessions</h3>
+        <ul class="prac-list" id="pracList"></ul>
+        <h3 style="margin-top:16px;">Sample experiment cards</h3>
+        <div class="cards" id="expCards"></div>
+      </div>
+    </div>
+    <div class="panel notes">
+      <h3>Experiment notes</h3>
+      <form id="noteForm">
+        <select id="notePrac"></select>
+        <input type="text" id="noteText" placeholder="Write a new experiment note, e.g. 'Incubate plates inverted at 37&deg;C'..." required>
+        <button type="submit">Add note</button>
+      </form>
+      <ul class="note-list" id="noteList"></ul>
+    </div>
+  </section>
+
+  <!-- SECTION 2: REPORT GUIDE -->
+  <section id="report">
+    <div class="sec-head">
+      <span class="num">2</span>
+      <h2>Report Guide</h2>
+      <span class="hint">Tap a report part to see a tip</span>
+    </div>
+    <p class="preview-title" id="reportFor"></p>
+    <div class="report-grid" id="reportGrid"></div>
+    <div class="tip-box" id="tipBox" style="display:none;">
+      <span class="label" id="tipLabel"></span>
+      <span id="tipText"></span>
+    </div>
+  </section>
+
+  <!-- SECTION 3: PRE-LAB PREVIEW -->
+  <section id="prelab">
+    <div class="sec-head">
+      <span class="num">3</span>
+      <h2>Pre-lab Preview</h2>
+      <span class="hint">What happens before class</span>
+    </div>
+    <div class="preview-grid">
+      <div class="panel steps">
+        <h3 class="preview-title" id="previewTitle"></h3>
+        <div id="stepList"></div>
+      </div>
+      <div class="panel expected">
+        <h3 class="preview-title">Expected results</h3>
+        <div class="obs" id="expectedBox"></div>
+        <p style="margin-top:12px;"><em>Results shown are sample descriptions for study practice only, not real measurements.</em></p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Biotechnology Lab Library &mdash; sample data for study practice only. Notes are not saved between visits.</footer>
+</div>
+
+<!-- SIMULATION MODAL -->
+<div class="modal" id="simModal" style="display:none;">
+  <div class="modal-panel">
+    <button class="modal-close" id="simClose" aria-label="Close">&times;</button>
+    <span class="modal-tag" id="simTag"></span>
+    <h3 id="simTitle"></h3>
+    <div class="sim-dots" id="simDots"></div>
+    <div class="sim-body" id="simBody"></div>
+    <div class="sim-controls">
+      <button id="simPrev">&larr; Back</button>
+      <button id="simNext">Next step &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = [
+  {
+    module: "BIO63304 — Cell Biology",
+    practicals: [
+      {
+        code: "P4&5", name: "Membrane Protein Extraction & SDS-PAGE (Part 1)",
+        card: "Extract integral membrane proteins from cultured A549 lung epithelial cells using detergent fractionation, then separate them by SDS-PAGE.",
+        steps: [
+          "Resuspend 5 × 10⁶ cultured A549 cells in growth media by scraping them off the plate with a cell scraper.",
+          "Wash the cell pellet with 3 mL of Cell Wash Solution and centrifuge at 300 × g for 5 minutes.",
+          "Discard the supernatant, resuspend the cells in Cell Wash Solution in a 2 mL centrifuge tube, and centrifuge again at 300 × g for 5 minutes.",
+          "Add Permeabilization Buffer to the pellet, vortex to a homogeneous suspension, and incubate at 4 °C with constant mixing.",
+          "Centrifuge 15 minutes at 16,000 × g — the supernatant now contains the cytosolic proteins (Fraction 1). Transfer it to a new tube.",
+          "Add Solubilisation Buffer to the pellet, resuspend by pipetting, and incubate at 4 °C for 30 minutes with constant mixing to solubilise membrane proteins.",
+          "Centrifuge again at 16,000 × g for 15 minutes at 4 °C — the supernatant is the membrane protein fraction (Fraction 2).",
+          "Prepare the SDS-PAGE gel (4–5% stacking gel over 10–15% resolving gel; polymerised with APS and TEMED for 30–60 min).",
+          "Mix samples with SDS loading buffer (contains SDS + reducing agent such as β-mercaptoethanol or DTT) to denature the proteins and coat them with negative charge.",
+          "Load samples and the protein molecular weight ladder into the wells, run electrophoresis in Tris-Glycine-SDS running buffer, then stain with Coomassie Brilliant Blue, destain, and image the gel.",
+          "Keep the cytosolic and membrane fractions on ice, or store aliquots at −80 °C for future use."
+        ],
+        expected: "After electrophoresis and Coomassie staining, Fraction 1 (cytosolic proteins) and Fraction 2 (membrane and membrane-associated proteins) show different band patterns. Smaller proteins migrate further through the polyacrylamide gel matrix, and band sizes are estimated only by comparing each band's migration distance against the molecular weight marker lane. For the worksheet: compare the two fractions' profiles, estimate molecular weights of well-separated bands, and label the printed nitrocellulose membrane picture.",
+        sim: [
+          { cap: "Scrape A549 monolayer off the plate", obs: "Under the microscope (or to the naked eye on the plate), the A549 monolayer detaches in sheets as you scrape — you now have a cloudy cell suspension in growth media." },
+          { cap: "Wash spin · 300 × g, 5 min", obs: "After the 300 × g spin, a small white-ish pellet forms at the bottom of the tube; the media above stays cloudy with debris. Washing removes serum proteins that would contaminate your fractions." },
+          { cap: "Second wash — pellet gets cleaner", obs: "The second wash spin gives a cleaner, tighter pellet. The supernatant is clearer than before — a sign most of the media has been washed away." },
+          { cap: "Permeabilise at 4 °C — membrane opens", obs: "During permeabilisation, the buffer gently dissolves the plasma membrane. The suspension may look slightly clearer or foamy from the mild detergent. Keep it at 4 °C to slow protease activity." },
+          { cap: "Spin 16,000 × g — keep supernatant = Fraction 1", obs: "After the 16,000 × g spin you get two parts: the supernatant (Fraction 1 — cytosolic proteins) is saved to a new tube, and the pellet (membranes + organelles) stays behind for the next step." },
+          { cap: "Solubilisation buffer frees membrane proteins", obs: "The solubilisation buffer's stronger detergent dissolves the membrane lipid bilayer and frees the integral membrane proteins. The pellet gradually breaks up as you pipette — this is the membrane fraction forming." },
+          { cap: "Spin again — supernatant = Fraction 2", obs: "This spin pellets any insoluble debris. The supernatant you collect now is Fraction 2 — your solubilised membrane and membrane-associated proteins. It should look clear but slightly viscous." },
+          { cap: "Cast gel: 4–5% stacking over 10–15% resolving", obs: "The stacking gel (4–5%) sets in ~15 min on top of the already-set resolving gel (10–15%). The comb leaves neat, straight wells. APS + TEMED start the polymerisation; 30–60 min at room temperature is enough." },
+          { cap: "SDS unfolds proteins, coats them (−)", obs: "In the loading buffer, SDS unfolds the proteins and coats them in uniform negative charge, while the reducing agent (β-mercaptoethanol or DTT) breaks disulfide bonds. After boiling, the samples are ready — you should see the blue loading dye mixed evenly through." },
+          { cap: "Run gel — bands migrate toward (+)", obs: "Load the ladder in lane 1 and each fraction next to it. As voltage is applied, the blue dye front migrates down; proteins stack into a sharp band in the stacking gel, then spread out by size in the resolving gel. Run until the dye front reaches ~1 cm from the bottom." },
+          { cap: "Stain with Coomassie — read band pattern", obs: "After Coomassie staining and destaining, the gel shows blue protein bands on a clear background: Fraction 1 (cytosolic) and Fraction 2 (membrane) each display a different pattern of bands. Fractions on ice are stable for the session; longer-term, store aliquots at −80 °C." }
+        ],
+        tips: {
+          aim: "Example line: \u201CThis practical aims to extract integral membrane proteins from cultured A549 cells by detergent-based fractionation and separate the cytosolic and membrane fractions by SDS-PAGE according to molecular weight.\u201D",
+          method: "Example line: \u201CA549 cells were permeabilised and fractionated by centrifugation at 16,000 × g to obtain cytosolic and membrane fractions, which were denatured in SDS loading buffer, resolved on a 10–15% SDS-polyacrylamide gel, and stained with Coomassie Brilliant Blue.\u201D",
+          results: "Example line: \u201CCoomassie-stained bands were observed in both fractions; Fraction 1 and Fraction 2 showed distinct banding patterns, and the molecular weights of well-separated bands were estimated against the protein ladder.\u201D",
+          conclusion: "Example line: \u201CDetergent-based extraction successfully separated cytosolic from membrane-associated proteins, as shown by their different SDS-PAGE profiles relative to the molecular weight standards.\u201D"
+        }
+      }
+    ]
+  },
+  {
+    module: "MBB 2024 — Microbiology",
+    practicals: [
+      {
+        code: "P1", name: "Gram Staining of Bacterial Smears",
+        card: "Differentiate Gram-positive and Gram-negative bacteria using crystal violet and safranin.",
+        steps: [
+          "Prepare a thin heat-fixed smear from the provided bacterial culture.",
+          "Flood the smear with crystal violet for 1 minute, then rinse gently with water.",
+          "Apply iodine solution (mordant) for 1 minute and rinse.",
+          "Decolourise with 95% ethanol for 10–15 seconds — this is the critical step.",
+          "Counterstain with safranin for 30 seconds, rinse, and blot dry.",
+          "Observe under the oil immersion objective (100×)."
+        ],
+        expected: "Gram-positive cells (sample: Staphylococcus-like colonies) retain the crystal violet and appear purple; Gram-negative cells (sample: E. coli-like culture) lose the primary stain and appear pink-red after safranin counterstaining.",
+        tips: {
+          aim: "Example line: \u201CThis experiment aims to differentiate bacterial species into Gram-positive and Gram-negative groups based on cell wall structure using the Gram staining technique.\u201D",
+          method: "Example line: \u201CA heat-fixed smear was stained sequentially with crystal violet, iodine, ethanol, and safranin, then observed at 100× oil immersion.\u201D",
+          results: "Example line: \u201CPurple cocci clusters and pink rod-shaped cells were observed, indicating a mixed Gram-positive and Gram-negative sample.\u201D",
+          conclusion: "Example line: \u201CThe staining pattern confirmed that cell wall thickness determines dye retention, distinguishing the two bacterial groups.\u201D"
+        }
+      },
+      {
+        code: "P2", name: "Aseptic Technique & Streak Plating",
+        card: "Isolate single colonies from a mixed culture using the quadrant streak method on nutrient agar.",
+        steps: [
+          "Sterilise the inoculating loop in the Bunsen burner flame until it glows red, then cool it.",
+          "Pick a loopful of the mixed culture and streak Zone 1 on the nutrient agar plate.",
+          "Flame and cool the loop again; drag from Zone 1 into Zone 2 and streak.",
+          "Repeat for Zones 3 and 4, rotating the plate about 90° each time.",
+          "Seal the plate with parafilm and incubate inverted at 37 °C for 24 hours."
+        ],
+        expected: "After incubation, Zone 1 shows confluent growth while later zones show well-separated, distinct colonies — each arising from a single bacterial cell. Sample observation: small, circular, cream-coloured colonies in Zone 4.",
+        tips: {
+          aim: "Example line: \u201CThis practical aims to isolate pure bacterial colonies from a mixed culture using aseptic technique and the quadrant streak plate method.\u201D",
+          method: "Example line: \u201CA cooled sterile loop was used to streak a nutrient agar plate in four quadrants, with flaming between zones, followed by inverted incubation at 37 °C.\u201D",
+          results: "Example line: \u201CIsolated cream-coloured circular colonies appeared in the fourth quadrant, suggesting successful dilution streaking.\u201D",
+          conclusion: "Example line: \u201CSeparation of individual colonies demonstrated that progressive dilution across quadrants yields pure cultures suitable for subculturing.\u201D"
+        }
+      }
+    ]
+  },
+  {
+    module: "BTE 3013 — Molecular Biology",
+    practicals: [
+      {
+        code: "P1", name: "Agarose Gel Electrophoresis of DNA",
+        card: "Separate DNA fragments by size using a 1% agarose gel and visualise bands under blue light.",
+        steps: [
+          "Cast a 1% agarose gel in TAE buffer and allow it to set with the comb in place.",
+          "Mix each DNA sample with loading dye; prepare a DNA ladder in the first well.",
+          "Load samples carefully into the wells using a micropipette.",
+          "Run electrophoresis at ~90 V until the dye front has migrated two-thirds of the gel.",
+          "Stain and visualise bands under a blue-light transilluminator, then record band positions."
+        ],
+        expected: "The DNA ladder resolves into bands of decreasing size down the gel. Sample observation: an unknown plasmid digest shows two bands, consistent with a linearised vector and a smaller insert fragment. Exact sizes are read only against the ladder.",
+        tips: {
+          aim: "Example line: \u201CThis experiment aims to determine the relative sizes of DNA fragments produced by restriction digestion using agarose gel electrophoresis.\u201D",
+          method: "Example line: \u201CDigested DNA samples mixed with loading dye were resolved on a 1% agarose gel in TAE buffer at 90 V and visualised under blue light.\u201D",
+          results: "Example line: \u201CTwo discrete bands were observed in the digest lane; their positions relative to the ladder suggested fragments of roughly 3.0 kb and 0.8 kb.\u201D",
+          conclusion: "Example line: \u201CThe band pattern was consistent with successful restriction digestion of the plasmid, releasing the expected insert from the vector backbone.\u201D"
+        }
+      },
+      {
+        code: "P2", name: "Bacterial Transformation with pUC19",
+        card: "Introduce a plasmid into competent E. coli cells via heat shock and select on ampicillin plates.",
+        steps: [
+          "Thaw chemically competent E. coli cells on ice and aliquot into chilled microcentrifuge tubes.",
+          "Add plasmid DNA (pUC19) to the cells; flick gently — do not pipette up and down harshly.",
+          "Keep on ice for 30 minutes, then heat shock at 42 °C for exactly 45 seconds.",
+          "Return to ice for 2 minutes, then add recovery medium (SOC) and shake at 37 °C for 1 hour.",
+          "Plate on LB–ampicillin agar and incubate overnight at 37 °C."
+        ],
+        expected: "The transformation plate should show discrete ampicillin-resistant colonies; the no-DNA control plate should remain clear. Sample observation: dozens of small white colonies on the experimental plate only, indicating successful uptake of the plasmid.",
+        tips: {
+          aim: "Example line: \u201CThis practical aims to introduce the pUC19 plasmid into competent E. coli cells and confirm transformation by ampicillin selection.\u201D",
+          method: "Example line: \u201CCompetent cells mixed with plasmid DNA were heat shocked at 42 °C, recovered in SOC medium, and plated on LB–ampicillin agar overnight.\u201D",
+          results: "Example line: \u201CColonies grew on the transformation plate while the no-DNA control stayed clear, indicating plasmid uptake conferred ampicillin resistance.\u201D",
+          conclusion: "Example line: \u201CThe heat shock method successfully transformed E. coli, as evidenced by selective colony growth on the antibiotic plate.\u201D"
+        }
+      }
+    ]
+  },
+  {
+    module: "BTC 3053 — Biochemistry",
+    practicals: [
+      {
+        code: "P1", name: "Protein Quantification by Bradford Assay",
+        card: "Estimate protein concentration in samples using Coomassie Brilliant Blue and a standard curve.",
+        steps: [
+          "Prepare BSA standards of known concentration (0, 0.2, 0.4, 0.6, 0.8, 1.0 mg/mL) in triplicate.",
+          "Add Bradford reagent to each standard and to the unknown samples in cuvettes or a microplate.",
+          "Incubate at room temperature for 5–10 minutes for colour development.",
+          "Measure absorbance at 595 nm, blanking against the 0 mg/mL standard.",
+          "Plot the standard curve and read the unknown concentrations from it."
+        ],
+        expected: "The standard curve should be linear over the prepared range, turning from brown to blue with increasing protein. Sample observation: the unknown sample reads between two adjacent standards on the curve; the actual value is calculated from the plotted line, not assumed.",
+        tips: {
+          aim: "Example line: \u201CThis experiment aims to determine the concentration of an unknown protein sample by constructing a BSA standard curve using the Bradford assay.\u201D",
+          method: "Example line: \u201CBSA standards and unknown samples were reacted with Bradford reagent and their absorbances read at 595 nm after 10 minutes.\u201D",
+          results: "Example line: \u201CAbsorbance increased linearly with BSA concentration; the unknown sample fell within the standard range, giving a concentration read from the curve.\u201D",
+          conclusion: "Example line: \u201CThe Bradford assay provided a rapid colorimetric estimate of protein concentration, though detergents in the sample could interfere.\u201D"
+        }
+      },
+      {
+        code: "P2", name: "Enzyme Kinetics of Amylase on Starch",
+        card: "Observe starch hydrolysis by salivary amylase and follow the reaction with iodine testing.",
+        steps: [
+          "Prepare a 1% starch solution and collect a diluted saliva sample (with consent) or use provided amylase.",
+          "Set up a series of tubes incubated at 37 °C; start a timer after adding the enzyme.",
+          "Every 2 minutes, withdraw a drop into a spot plate well and add a drop of iodine.",
+          "Record the colour change: blue-black indicates starch; brown then colourless indicates breakdown.",
+          "Plot reaction progress against time from the colour change data."
+        ],
+        expected: "Iodine colour shifts from blue-black to brown to colourless as starch is hydrolysed. Sample observation: after several minutes at 37 °C the test drops no longer turn blue, indicating amylase activity; boiled-enzyme control stays blue-black throughout.",
+        tips: {
+          aim: "Example line: \u201CThis practical aims to observe the hydrolysis of starch by amylase over time and demonstrate the effect of temperature on enzyme activity.\u201D",
+          method: "Example line: \u201CA starch–amylase mixture was incubated at 37 °C and sampled at 2-minute intervals, testing each sample with iodine to track starch breakdown.\u201D",
+          results: "Example line: \u201CIodine colour faded from blue-black to colourless within several minutes at 37 °C, while the boiled-enzyme control remained blue-black.\u201D",
+          conclusion: "Example line: \u201CAmylase catalysed starch hydrolysis at physiological temperature, and heat denaturation abolished its catalytic activity.\u201D"
+        }
+      }
+    ]
+  }
+];
+
+const TIP_INTRO = {
+  aim: "One sentence: what the experiment sets out to do and which technique it uses.",
+  method: "Past tense, passive voice; list what you actually did in order, with key conditions.",
+  results: "Describe observations only — reference the tables or figures, never invent numbers.",
+  conclusion: "One or two sentences linking the results back to the aim; note any limitations."
+};
+const PART_ORDER = ["aim", "method", "results", "conclusion"];
+
+let currentModule = 0;
+let currentPrac = 0;
+let notes = [
+  { moduleIdx: 1, prac: "P1 — Gram Staining", text: "Decolourising too long makes Gram-positives look negative — time it carefully.", author: "Sample note" },
+  { moduleIdx: 2, prac: "P2 — Bacterial Transformation", text: "Keep competent cells on ice at all times; flick gently after adding DNA.", author: "Sample note" },
+  { moduleIdx: 3, prac: "P1 — Bradford Assay", text: "Run standards and unknowns in triplicate so the standard curve stays reliable.", author: "Sample note" }
+];
+
+const $ = id => document.getElementById(id);
+
+function renderModules() {
+  $("moduleList").innerHTML = DATA.map((m, i) =>
+    `<li class="${i === currentModule ? 'active' : ''}" data-i="${i}">${m.module}<span class="count">${m.practicals.length}</span></li>`
+  ).join("");
+  [...$("moduleList").children].forEach(li =>
+    li.addEventListener("click", () => { currentModule = +li.dataset.i; currentPrac = 0; renderModuleContent(); })
+  );
+}
+
+function renderPracticals() {
+  const mod = DATA[currentModule];
+  $("pracHeading").textContent = "Practical sessions — " + mod.module;
+  $("pracList").innerHTML = mod.practicals.map((p, i) =>
+    `<li class="prac-item ${i === currentPrac ? 'active' : ''}" data-i="${i}">
+       <span><span class="code">${p.code}</span><br><span class="name">${p.name}</span></span>
+       <button class="open-btn" data-i="${i}">Open &rarr;</button>
+     </li>`
+  ).join("");
+  [...$("pracList").querySelectorAll(".prac-item")].forEach(li =>
+    li.addEventListener("click", () => {
+      currentPrac = +li.dataset.i;
+      renderPracticalContent();
+    })
+  );
+  [...$("pracList").querySelectorAll(".open-btn")].forEach(btn =>
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      currentPrac = +btn.dataset.i;
+      renderPracticalContent();
+      openSim();
+    })
+  );
+}
+
+function renderCards() {
+  const mod = DATA[currentModule];
+  $("expCards").innerHTML = mod.practicals.map(p =>
+    `<div class="exp-card"><span class="tag">${mod.module.split(" — ")[0]} · ${p.code}</span>
+       <h4>${p.name}</h4><p>${p.card}</p></div>`
+  ).join("");
+}
+
+function renderNotes() {
+  const shown = notes.filter(n => n.moduleIdx === currentModule);
+  $("noteList").innerHTML = shown.length
+    ? shown.map(n => `<li>${n.text}<br><span class="who">${n.prac} · ${n.author}</span></li>`).join("")
+    : "<li>No notes yet for this module — add the first one above.</li>";
+  $("notePrac").innerHTML = DATA[currentModule].practicals
+    .map(p => `<option value="${p.code} — ${p.name}">${p.code} — ${p.name}</option>`).join("");
+}
+
+function renderModuleContent() {
+  renderModules();
+  renderPracticals();
+  renderCards();
+  renderNotes();
+  renderPracticalContent();
+}
+
+function renderPracticalContent() {
+  const p = DATA[currentModule].practicals[currentPrac];
+  $("reportFor").innerHTML = `Report guide for: <strong>${p.code} — ${p.name}</strong> <em style="color:var(--muted)">(click a part for a tip)</em>`;
+  $("reportGrid").innerHTML = PART_ORDER.map(part =>
+    `<div class="report-part" data-part="${part}"><h4>${part.charAt(0).toUpperCase() + part.slice(1)}</h4><p>${TIP_INTRO[part]}</p></div>`
+  ).join("");
+  [...$("reportGrid").children].forEach(el =>
+    el.addEventListener("click", () => {
+      const part = el.dataset.part;
+      [...$("reportGrid").children].forEach(x => x.classList.remove("active"));
+      el.classList.add("active");
+      $("tipBox").style.display = "block";
+      $("tipLabel").textContent = "Tip — " + part;
+      $("tipText").textContent = p.tips[part];
+    })
+  );
+  $("tipBox").style.display = "none";
+  $("previewTitle").innerHTML = `Step-by-step preview: <strong>${p.code} — ${p.name}</strong>`;
+  const hasViz = typeof vizFor === "function" && vizFor(currentModule, currentPrac, 0);
+  $("stepList").innerHTML = hasViz
+    ? `<div class="story">` + p.steps.map((_, i) => {
+        const v = vizFor(currentModule, currentPrac, i);
+        const cap = (p.sim && p.sim[i] && p.sim[i].cap) || "";
+        return `<div class="story-card">${v}<div class="cap"><b>${i + 1}</b><span>${cap}</span></div></div>`;
+      }).join("") + `</div>`
+    : p.steps.map(s => `<li>${s}</li>`).join("");
+  $("expectedBox").innerHTML = hasViz
+    ? `<div class="result-visual">${vizFor(currentModule, currentPrac, p.steps.length - 1)}</div>
+       <p style="margin-top:10px;font-size:13px;"><strong>Fractions differ in band pattern</strong> — estimate sizes only against the ladder lane. <em>Illustrative, not real measurements.</em></p>`
+    : "<strong>Expected result:</strong> " + p.expected;
+}
+
+const DEFAULT_OBS = "Sample observation: follow this step as written in your manual and record what you actually see in your notebook.";
+
+/* ---- SVG scene builders for the P4&5 simulation ---- */
+const tube = (x, y, fill1, fill2, label) => `
+  <g transform="translate(${x},${y})">
+    <rect x="8" y="0" width="26" height="86" rx="4" fill="#eef2ec" stroke="#b9c4b6" stroke-width="2"/>
+    ${fill1 ? `<path d="M8 26 L34 26 L34 74 Q21 86 8 74 Z" fill="${fill1}"/>` : ""}
+    ${fill2 ? `<ellipse cx="21" cy="76" rx="10" ry="7" fill="${fill2}"/>` : ""}
+    <rect x="6" y="12" width="30" height="8" rx="2" fill="#4c6b54" opacity="0.85"/>
+    ${label ? `<text x="21" y="105" text-anchor="middle" font-size="11" font-family="Georgia" fill="#7a7468">${label}</text>` : ""}
+  </g>`;
+
+const VIZ = [
+  // 1: scrape cells from plate
+  () => `
+  <svg viewBox="0 0 560 190">
+    <rect x="60" y="70" width="330" height="70" rx="10" fill="#fffdf8" stroke="#b9c4b6" stroke-width="2"/>
+    <rect x="66" y="76" width="318" height="58" rx="6" fill="#f3e9dc"/>
+    <g opacity="0.9">
+      ${[80,110,140,170,200,230,260,290,320,350].map(cx => `<circle cx="${cx}" cy="${95 + (cx%40)/8}" r="6" fill="#8fa3c9"/>`).join("")}
+    </g>
+    <g transform="translate(230,40)">
+      <line x1="0" y1="0" x2="60" y2="28" stroke="#8b5e3c" stroke-width="6" stroke-linecap="round"/>
+      <path d="M60 28 L78 40 L64 46 L56 34 Z" fill="#c9c9c9" stroke="#9a9a9a"/>
+    </g>
+    <text x="225" y="165" text-anchor="middle" font-size="12" font-family="Georgia" fill="#7a7468">A549 cell monolayer being scraped off the plate</text>
+  </svg>`,
+  // 2: wash spin 300g
+  () => `
+  <svg viewBox="0 0 560 190">
+    <g transform="translate(280,95)">
+      <circle r="70" fill="#fffdf8" stroke="#4c6b54" stroke-width="3"/>
+      <g class="rotor">
+        ${[0,120,240].map(a => `<g transform="rotate(${a})"><rect x="-9" y="-62" width="18" height="44" rx="4" fill="#e2ddd2"/><rect x="-6" y="-46" width="12" height="24" rx="2" fill="#a8bfd8"/></g>`).join("")}
+      </g>
+      <circle r="10" fill="#4c6b54"/>
+      <text y="105" text-anchor="middle" font-size="12" font-family="Georgia" fill="#7a7468">300 × g, 5 min — cells pellet down</text>
+    </g>
+  </svg>`,
+  // 3: second wash — clean pellet
+  () => `
+  <svg viewBox="0 0 560 190">
+    ${tube(160, 20, "#dfe8f5", "#9db7a2", "after wash 1")}
+    ${tube(330, 20, "#eef3fa", "#7ea47f", "after wash 2")}
+    <path d="M250 55 L320 55" stroke="#7a7468" stroke-width="2" marker-end="url(#arr)"/>
+    <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#7a7468"/></marker></defs>
+    <text x="280" y="150" text-anchor="middle" font-size="12" font-family="Georgia" fill="#7a7468">Pellet gets tighter and cleaner, supernatant clearer</text>
+  </svg>`,
+  // 4: permeabilisation with bubbles
+  () => `
+  <svg viewBox="0 0 560 190">
+    ${tube(200, 15, "#e8f0e4", "#7ea47f", "cells + permeabilisation buffer, 4 °C")}
+    <g>
+      <circle class="bubble" cx="215" cy="70" r="4" fill="none" stroke="#7a9b7f" stroke-width="1.5"/>
+      <circle class="bubble" cx="228" cy="60" r="3" fill="none" stroke="#7a9b7f" stroke-width="1.5" style="animation-delay:.5s"/>
+      <circle class="bubble" cx="222" cy="66" r="5" fill="none" stroke="#7a9b7f" stroke-width="1.5" style="animation-delay:1s"/>
+    </g>
+    <text x="400" y="70" font-size="13" font-family="Georgia" fill="#7a7468">mild detergent opens</text>
+    <text x="400" y="88" font-size="13" font-family="Georgia" fill="#7a7468">the plasma membrane</text>
+  </svg>`,
+  // 5: 16000g spin — Fraction 1 collected
+  () => `
+  <svg viewBox="0 0 560 190">
+    <g transform="translate(150,95)">
+      <circle r="66" fill="#fffdf8" stroke="#4c6b54" stroke-width="3"/>
+      <g class="rotor">
+        ${[0,90,180,270].map(a => `<g transform="rotate(${a})"><rect x="-8" y="-58" width="16" height="40" rx="4" fill="#e2ddd2"/><rect x="-5" y="-44" width="10" height="22" rx="2" fill="#a8bfd8"/></g>`).join("")}
+      </g>
+      <circle r="9" fill="#4c6b54"/>
+    </g>
+    ${tube(320, 20, "#dbe9f7", "", "Fraction 1: cytosolic proteins")}
+    <text x="150" y="180" text-anchor="middle" font-size="12" font-family="Georgia" fill="#7a7468">16,000 × g</text>
+  </svg>`,
+  // 6: solubilisation buffer on pellet
+  () => `
+  <svg viewBox="0 0 560 190">
+    ${tube(160, 15, "#f0e8d8", "#b98a3c", "membrane pellet + solubilisation buffer")}
+    <g>
+      ${[0,1,2,3,4].map(i => `<circle class="frag" cx="182" cy="82" r="4" fill="#b98a3c" style="--dx:${Math.cos(i*1.3)*26}px;--dy:${Math.sin(i*1.3)*20}px"/>`).join("")}
+      ${[5,6,7].map(i => `<circle class="frag" cx="182" cy="82" r="3" fill="#8a6a2e" style="--dx:${Math.cos(i*1.3)*22}px;--dy:${Math.sin(i*1.3)*18}px"/>`).join("")}
+    </g>
+    <text x="410" y="70" font-size="13" font-family="Georgia" fill="#7a7468">strong detergent dissolves</text>
+    <text x="410" y="88" font-size="13" font-family="Georgia" fill="#7a7468">the bilayer, freeing proteins</text>
+  </svg>`,
+  // 7: second 16000g — Fraction 2 collected
+  () => `
+  <svg viewBox="0 0 560 190">
+    ${tube(150, 20, "#f0e8d8", "#d8cba8", "insoluble debris (discard)")}
+    ${tube(340, 20, "#e6ddc4", "", "Fraction 2: membrane proteins")}
+    <path d="M240 55 L325 55" stroke="#7a7468" stroke-width="2" marker-end="url(#arr2)"/>
+    <defs><marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 Z" fill="#7a7468"/></marker></defs>
+    <text x="280" y="150" text-anchor="middle" font-size="12" font-family="Georgia" fill="#7a7468">Supernatant saved — Fraction 2 is your membrane protein sample</text>
+  </svg>`,
+  // 8: cast gel — stacking over resolving
+  () => `
+  <svg viewBox="0 0 560 190">
+    <rect x="200" y="20" width="160" height="140" rx="6" fill="#fffdf8" stroke="#b9c4b6" stroke-width="2"/>
+    <rect x="208" y="28" width="144" height="40" fill="#eef2ec"/>
+    <rect x="208" y="72" width="144" height="80" fill="#cfdccf"/>
+    <rect x="212" y="24" width="12" height="44" fill="#fffdf8" stroke="#b9c4b6"/>
+    <rect x="234" y="24" width="12" height="44" fill="#fffdf8" stroke="#b9c4b6"/>
+    <rect x="256" y="24" width="12" height="44" fill="#fffdf8" stroke="#b9c4b6"/>
+    <rect x="278" y="24" width="12" height="44" fill="#fffdf8" stroke="#b9c4b6"/>
+    <rect x="300" y="24" width="12" height="44" fill="#fffdf8" stroke="#b9c4b6"/>
+    <rect x="322" y="24" width="12" height="44" fill="#fffdf8" stroke="#b9c4b6"/>
+    <text x="280" y="52" text-anchor="middle" font-size="11" font-family="Georgia" fill="#7a7468">stacking 4–5%</text>
+    <text x="280" y="118" text-anchor="middle" font-size="11" font-family="Georgia" fill="#5c6b5c">resolving 10–15%</text>
+    <text x="280" y="178" text-anchor="middle" font-size="12" font-family="Georgia" fill="#7a7468">Gel casts with comb-made wells; polymerises 30–60 min (APS + TEMED)</text>
+  </svg>`,
+  // 9: denature in loading buffer
+  () => `
+  <svg viewBox="0 0 560 190">
+    ${tube(140, 15, "#dfe8f5", "#7ea47f", "protein sample")}
+    <g transform="translate(300,55)">
+      <path d="M0 0 C10 -14 24 14 34 0 C44 -14 58 14 68 0" fill="none" stroke="#b98a3c" stroke-width="3" stroke-linecap="round"/>
+      <text x="34" y="30" text-anchor="middle" font-size="11" font-family="Georgia" fill="#7a7468">folded protein</text>
+    </g>
+    <g transform="translate(430,55)">
+      <line x1="0" y1="0" x2="70" y2="0" stroke="#4c6b54" stroke-width="3" stroke-linecap="round"/>
+      ${[8,20,32,44,56,66].map(x => `<line x1="${x}" y1="-6" x2="${x}" y2="6" stroke="#4c6b54" stroke-width="2"/>`).join("")}
+      <text x="35" y="30" text-anchor="middle" font-size="11" font-family="Georgia" fill="#7a7468">SDS-coated, unfolded</text>
+    </g>
+    <text x="280" y="160" text-anchor="middle" font-size="12" font-family="Georgia" fill="#7a7468">SDS unfolds proteins and gives them a uniform negative charge</text>
+  </svg>`,
+  // 10: electrophoresis run — animated bands
+  () => `
+  <svg viewBox="0 0 560 190">
+    <rect x="140" y="15" width="280" height="150" rx="6" fill="#fffdf8" stroke="#b9c4b6" stroke-width="2"/>
+    <rect x="148" y="22" width="264" height="12" fill="#4c6b54" opacity="0.7"/>
+    <text x="288" y="44" text-anchor="middle" font-size="10" font-family="Georgia" fill="#7a7468">— cathode (−) —</text>
+    <rect x="148" y="146" width="264" height="12" fill="#b98a3c" opacity="0.7"/>
+    <text x="288" y="164" text-anchor="middle" font-size="10" font-family="Georgia" fill="#7a7468">— anode (+) —</text>
+    <line x1="170" y1="30" x2="170" y2="150" stroke="#c9c9c9" stroke-width="1"/>
+    <line x1="288" y1="30" x2="288" y2="150" stroke="#c9c9c9" stroke-width="1"/>
+    <line x1="406" y1="30" x2="406" y2="150" stroke="#c9c9c9" stroke-width="1"/>
+    <text x="170" y="60" text-anchor="middle" font-size="10" font-family="Georgia" fill="#7a7468">Ladder</text>
+    <text x="288" y="60" text-anchor="middle" font-size="10" font-family="Georgia" fill="#7a7468">Fraction 1</text>
+    <text x="406" y="60" text-anchor="middle" font-size="10" font-family="Georgia" fill="#7a7468">Fraction 2</text>
+    <g>
+      ${[58,72,84,94,102,109].map((y,i) => `<rect class="band" x="165" y="52" width="10" height="4" rx="1" fill="#4c5568" style="--ty:${y-52}px;animation-delay:${i*0.15}s"/>`).join("")}
+      ${[60,78,92,104].map((y,i) => `<rect class="band" x="283" y="52" width="10" height="4" rx="1" fill="#4c6b54" style="--ty:${y-52}px;animation-delay:${0.4+i*0.2}s"/>`).join("")}
+      ${[66,82,98,112].map((y,i) => `<rect class="band" x="401" y="52" width="10" height="4" rx="1" fill="#b98a3c" style="--ty:${y-52}px;animation-delay:${0.7+i*0.2}s"/>`).join("")}
+    </g>
+    <text x="288" y="184" text-anchor="middle" font-size="12" font-family="Georgia" fill="#7a7468">Bands migrate: small proteins move fastest toward the (+) electrode</text>
+  </svg>`,
+  // 11: stained gel result
+  () => `
+  <svg viewBox="0 0 560 190">
+    <rect x="150" y="10" width="260" height="160" rx="6" fill="#f7f9f4" stroke="#b9c4b6" stroke-width="2"/>
+    <text x="190" y="30" text-anchor="middle" font-size="10" font-family="Georgia" fill="#7a7468">Ladder</text>
+    <text x="280" y="30" text-anchor="middle" font-size="10" font-family="Georgia" fill="#7a7468">Fraction 1</text>
+    <text x="370" y="30" text-anchor="middle" font-size="10" font-family="Georgia" fill="#7a7468">Fraction 2</text>
+    ${[40,52,62,71,79,86].map(y => `<rect x="185" y="${y}" width="10" height="4" rx="1" fill="#3d4b7a"/>`).join("")}
+    ${[46,58,70,82].map(y => `<rect x="275" y="${y}" width="10" height="4" rx="1" fill="#2f5d3a"/>`).join("")}
+    ${[50,63,76,89].map(y => `<rect x="365" y="${y}" width="10" height="4" rx="1" fill="#8a5a1e"/>`).join("")}
+    <text x="280" y="150" text-anchor="middle" font-size="12" font-family="Georgia" fill="#7a7468">Coomassie-stained bands: each fraction shows a distinct pattern</text>
+    <text x="280" y="166" text-anchor="middle" font-size="11" font-family="Georgia" fill="#a09884">(illustrative pattern — read real sizes off your own ladder)</text>
+  </svg>`
+];
+
+function vizFor(moduleIdx, pracIdx, stepIdx) {
+  if (moduleIdx === 0 && pracIdx === 0 && VIZ[stepIdx]) return VIZ[stepIdx]();
+  return null;
+}
+function simSteps(p) {
+  return p.steps.map((s, i) => ({ text: s, obs: (p.sim && p.sim[i]) ? p.sim[i].obs : DEFAULT_OBS }));
+}
+
+let simList = [];
+let simIdx = 0;
+
+function openSim() {
+  const p = DATA[currentModule].practicals[currentPrac];
+  simList = simSteps(p);
+  simIdx = 0;
+  $("simTag").textContent = DATA[currentModule].module.split(" — ")[0] + " · " + p.code + " · Pre-lab simulation";
+  $("simTitle").textContent = p.name;
+  $("simModal").style.display = "flex";
+  renderSim();
+}
+
+function renderSim() {
+  const total = simList.length;
+  $("simDots").innerHTML = simList.map((_, i) =>
+    `<span class="dot ${i < simIdx ? 'done' : ''} ${i === simIdx ? 'on' : ''}"></span>`).join("");
+  const step = simList[simIdx];
+  const isLast = simIdx === total - 1;
+  const viz = vizFor(currentModule, currentPrac, simIdx);
+  $("simBody").innerHTML =
+    `<span class="sim-count">Step ${simIdx + 1} of ${total}</span>` +
+    `<p class="sim-text">${step.text}</p>` +
+    (viz ? `<div class="sim-viz">${viz}</div>` : "") +
+    `<div class="sim-obs"><strong>What you'd observe:</strong> ${step.obs}</div>` +
+    (isLast ? `<div class="sim-final"><strong>Final expected result:</strong> ${DATA[currentModule].practicals[currentPrac].expected}</div>` : "");
+  $("simPrev").disabled = simIdx === 0;
+  $("simNext").textContent = isLast ? "Finish" : "Next step →";
+}
+
+$("simClose").addEventListener("click", () => { $("simModal").style.display = "none"; });
+$("simModal").addEventListener("click", e => { if (e.target === $("simModal")) $("simModal").style.display = "none"; });
+$("simPrev").addEventListener("click", () => { if (simIdx > 0) { simIdx--; renderSim(); } });
+$("simNext").addEventListener("click", () => {
+  if (simIdx < simList.length - 1) { simIdx++; renderSim(); }
+  else $("simModal").style.display = "none";
+});
+
+$("noteForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const text = $("noteText").value.trim();
+  if (!text) return;
+  notes.unshift({
+    moduleIdx: currentModule,
+    prac: $("notePrac").value,
+    text,
+    author: "My note"
+  });
+  $("noteText").value = "";
+  renderNotes();
+});
+
+renderModuleContent();
+</script>
+</body>
+</html>
